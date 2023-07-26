@@ -10,8 +10,10 @@ PROMPT_SCHEMA = {"type": "object",
                  "additionalProperties": False}
 
 RESPONSE_SCHEMA = {"type": "object",
-                   "properties":{},
-                   "required":[],
+                   "properties": {
+                       "Index": {"type": "number"}
+                   },
+                   "required": ["Index"],
                    "additionalProperties": False
                    }
 

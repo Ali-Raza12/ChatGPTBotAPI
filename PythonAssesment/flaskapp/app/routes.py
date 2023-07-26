@@ -30,7 +30,6 @@ def create_prompt():
         jsonschema.validate(instance=data, schema=config.PROMPT_SCHEMA)
         status = bot.create_prompt(prompt=data['InputPrompt'])
         if status:
-            print(bot.input_prompt_list)
             return jsonify({"Response": "Prompt Saved Successfully"}), 200
         else:
             return jsonify({"Error": "Prompt must be a string"}), 400
@@ -55,8 +54,12 @@ def get_response():
     """
     try:
         data = json.loads(request.get_data(as_text=True))
+        jsonschema.validate(instance=data, schema=config.RESPONSE_SCHEMA)
         output = bot.get_response(prompt_index=data['Index'])
-        return jsonify({"Response": output})
+        if output == 0:
+            return jsonify({"Error":"Provided Index must be an integer"}), 400
+        else:
+            return jsonify({"Response": output}), 200
     
     except json.JSONDecodeError:
         return jsonify({"Error": "Invalid JSON syntax"}), 400
@@ -82,7 +85,6 @@ def update_prompt():
         status = bot.update_prompt(
             prompt_index=data['Index'], new_prompt=data['InputPrompt'])
         if status == 0:
-            print(bot.input_prompt_list)
             return jsonify({"Error": "Provided Index must be an integer"}), 400
         elif status == 1:
             return jsonify({"Response": "Prompt Updated Successfully"}), 200
@@ -109,11 +111,11 @@ def delete_prompt():
     """
     try:
         data = json.loads(request.get_data(as_text=True))
+        jsonschema.validate(instance=data, schema=config.DELETE_SCHEMA)
         status = bot.delete_prompt(prompt_index=data['Index'])
         if status == 0:
             return jsonify({"Error": "Provided Index must be an integer"}), 400
         elif status == 1:
-            print(bot.input_prompt_list)
             return jsonify({"Response": "Prompt Deleted Successfully"}), 200
         else:
             return jsonify({"Error": "Provided Index is out of range"}), 400

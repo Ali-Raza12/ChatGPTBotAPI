@@ -24,10 +24,11 @@ class ChatGPTBotAPI:
 
     def get_response(self, prompt_index: int):
         if not isinstance(prompt_index, int):
-            return False
+            return 0
         self.chat_completion = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo", messages=[{"role": "user", "content": self.input_prompt_list[0]}])
-        print(self.chat_completion.choices[0].message.content)
+            model="gpt-3.5-turbo", messages=[{"role": "user", "content": self.input_prompt_list[prompt_index]}])
+        response = self.chat_completion.choices[0].message.content
+        return str(response)
 
     def update_prompt(self, prompt_index: int, new_prompt: str):
         if not (isinstance(prompt_index, int) and isinstance(new_prompt, str)):
